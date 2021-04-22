@@ -4,6 +4,17 @@ import ReactDOM from 'react-dom';
 import Fruit from './components/Fruit'
 import Banana from './components/Banana'
 import Reservation from './components/Reservation'
+import axios from '../lib/axios';
+import 'antd/dist/antd.css'
+
+import DefaultLayout from '../layouts/DefaultLayout';
+import Router, { withRouter } from 'next/router';
+
+import {
+  Button,
+  Table,
+  Divider,
+} from 'antd';
 
 /**
  * ======================TYPESCRIPT====================, 
@@ -460,59 +471,123 @@ class Books extends React.Component <{books: any},{}> {
     super(props)
   }
   
-  render () {
-    console.log('props in books component', this.props)
-    console.log('props in books component', this.props.books)
+  render () {  
+    console.log('state',this.state)
     return (
       this.props.books ? <ListFunction items={this.props.books}/> : null
     )
   }
 }
+class Page extends React.Component{
+  state : any = {
+    data: [],
+    products: [],
+    token: '',
+    loading: false,
+  }
+
+  componentDidMount () {
+    this.fetch()
+  }
+
+  fetch = async (params = {}) => {
+    this.setState({ loading: true });
+    await axios.get(`/`) .then(res => {
+      this.setState({
+        data: res.data.hello
+      })
+    })
+    await axios.get(`/user`).then(res => {
+      this.setState({
+        token: res.data.data.token
+      })
+    })
+
+    await axios.get(`/api/products?token=${this.state.token}`).then(res => {
+      this.setState({
+        loading: false,
+        products: res.data.data.products
+      })
+    })
+  }
+
+  render () {
+    const columns = [
+      {
+        title: 'ID',
+        dataIndex: 'id',
+      },
+      {
+        title: 'Product Name',
+        dataIndex: 'name',
+      },
+    ]; 
+    return (
+      <div>
+        <Divider/>
+        <Table
+          scroll={{ x: 1100 }}
+          columns={columns}
+          rowKey={product => `product-${product.id}`}
+          dataSource={this.state.products}
+          pagination={this.state.pagination}
+          loading={this.state.loading}
+          bordered
+        />
+      </div>
+    )
+  }
+}
+
 
 export default function App () {
   return (
-    <div>
-      <div className = "m-2 p-4 rounded-lg shadow-lg">
-        This is the pre-component ; Treat this as the "Hello world" of this Typescript React Project.
-        Below is called an element.
-        {element}
-      </div>
-      <div className="m-2 p-4 rounded-lg bg-yellow-300">
-        <p>1st component ; It features the utilization of the Basic Syntax</p>
-        <FirstComponent firstName="Zarley" lastName="Vedad" math={MathSample(3,4,'mathDemo')}/>
-      </div>
+    <DefaultLayout>
+      <div className="m-2">
+        <div className = "m-2 p-4 rounded-lg shadow-lg">
+          This is the pre-component ; Treat this as the "Hello world" of this Typescript React Project.
+          Below is called an element.
+          {element}
+        </div>
+        <div className="m-2 p-4 rounded-lg bg-yellow-300">
+          <p>1st component ; It features the utilization of the Basic Syntax</p>
+          <FirstComponent firstName="Zarley" lastName="Vedad" math={MathSample(3,4,'mathDemo')}/>
+        </div>
 
-      <div className="m-2 p-4 rounded-lg bg-green-300">
-        <p>2nd component ; It features utilization of Functions</p>
-        <SecondComponent/>
+        <div className="m-2 p-4 rounded-lg bg-green-300">
+          <p>2nd component ; It features utilization of Functions</p>
+          <SecondComponent/>
+        </div>
+        <div className="m-2 p-4 rounded-lg bg-blue-300">
+          <p>3rd component ; It will feature utilization of OOP Concepts. Classes, Inheritance, etc</p> 
+          <Fruit/>
+          <Banana/>
+        </div>
+        <div className="m-2 p-4 rounded-lg bg-orange-300">
+          <p>4th component ; Features states, props and actions</p>
+          <Toggle test1='banana' test2={7} test3='hindi ko sure'/>
+        </div>
+        <div className="m-2 p-4 rounded-lg bg-indigo-300">
+          <p>5th component ; Features conditional Rendering</p>
+          <LoginControl/>
+          <Mailbox unreadMessages={messages} />
+        </div>
+        <div className="m-2 p-4 rounded-lg bg-purple-300">
+          <p>6th component ; Features Listing</p>
+          <p>Rendering Array of elements thru variable</p>
+          {listBookSeries}
+          <p>Rendering Array of elements thru function</p>
+          <ListFunction items={bookSeries}/>
+          <p>Rendering Array of elements thru Component ; With IDs</p>
+          <Books books={bookSeriesWithId}/>
+        </div>
+        <div className="m-2 p-4 rounded-lg bg-green-300">
+          <p>7th component ; Features Forms</p>
+          <Reservation/>
+        </div>
       </div>
-      <div className="m-2 p-4 rounded-lg bg-blue-300">
-        <p>3rd component ; It will feature utilization of OOP Concepts. Classes, Inheritance, etc</p> 
-        <Fruit/>
-        <Banana/>
-      </div>
-      <div className="m-2 p-4 rounded-lg bg-orange-300">
-        <p>4th component ; Features states, props and actions</p>
-        <Toggle test1='banana' test2={7} test3='hindi ko sure'/>
-      </div>
-      <div className="m-2 p-4 rounded-lg bg-indigo-300">
-        <p>5th component ; Features conditional Rendering</p>
-        <LoginControl/>
-        <Mailbox unreadMessages={messages} />
-      </div>
-      <div className="m-2 p-4 rounded-lg bg-purple-300">
-        <p>6th component ; Features Listing</p>
-        <p>Rendering Array of elements thru variable</p>
-        {listBookSeries}
-        <p>Rendering Array of elements thru function</p>
-        <ListFunction items={bookSeries}/>
-        <p>Rendering Array of elements thru Component ; With IDs</p>
-        <Books books={bookSeriesWithId}/>
-      </div>
-      <div className="m-2 p-4 rounded-lg bg-green-300">
-        <p>7th component ; Features Forms</p>
-        <Reservation/>
-      </div>
-    </div>
+    </DefaultLayout>
   )
 }
+
+
