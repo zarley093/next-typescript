@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState, useCallback,  useContext, cloneElement, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 
-import Fruit from './components/Fruit'
-import Banana from './components/Banana'
-import Reservation from './components/Reservation'
+// import Fruit from './components/Fruit'
+// import Banana from './components/Banana'
+// import Reservation from './components/Reservation'
 import axios from '../lib/axios';
 import 'antd/dist/antd.css'
 
@@ -560,8 +560,8 @@ export default function App () {
         </div>
         <div className="m-2 p-4 rounded-lg bg-blue-300">
           <p>3rd component ; It will feature utilization of OOP Concepts. Classes, Inheritance, etc</p> 
-          <Fruit/>
-          <Banana/>
+          {/* <Fruit/>
+          <Banana/> */}
         </div>
         <div className="m-2 p-4 rounded-lg bg-orange-300">
           <p>4th component ; Features states, props and actions</p>
@@ -583,7 +583,7 @@ export default function App () {
         </div>
         <div className="m-2 p-4 rounded-lg bg-green-300">
           <p>7th component ; Features Forms</p>
-          <Reservation/>
+          {/* <Reservation/> */}
         </div>
       </div>
     </DefaultLayout>
